@@ -123,3 +123,33 @@
             <div class="modal-header">
                 <h2><i class="fas fa-edit"></i> Edit Habits</h2>
                 
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-subtitle">Default habits (cannot be removed):</p>
+                <div id="default-habits-list" class="habits-edit-list">
+                    <!-- Default habits will be populated here -->
+                </div>
+                
+                <p class="modal-subtitle">Custom habits:</p>
+                <div id="custom-habits-list" class="habits-edit-list">
+                    <!-- Custom habits will be populated here -->
+                </div>
+                
+                <div class="add-habit-form">
+                    <input type="text" id="new-habit-input" placeholder="Enter a new habit (e.g., Read 30 minutes)">
+                    <button id="add-habit-btn" class="btn-primary">
+                        <i class="fas fa-plus"></i> Add Habit
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="save-habits-btn" class="btn-success">Save Changes</button>
+                <button class="btn-secondary close-modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
