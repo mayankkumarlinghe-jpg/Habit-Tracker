@@ -559,5 +559,108 @@ header h1 {
     transition: border-color 0.3s;
 }
 
+#new-habit-input:focus {
+    border-color: #4b6cb7;
+    outline: none;
+}
+
+.modal-footer {
+    padding: 20px 30px;
+    background: #f8f9fa;
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    border-top: 1px solid #eee;
+}
+
+/* Footer */
+footer {
+    margin-top: 40px;
+    text-align: center;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+
+
+/* Checkmark Button Styles */
+.checkmark-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    color: #4b6cb7;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.checkmark-btn:hover:not(:disabled) {
+    background-color: rgba(75, 108, 183, 0.1);
+    transform: scale(1.1);
+}
+
+.checkmark-btn:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.checkmark-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.checkmark-btn .fa-check-circle {
+    color: #2ecc71;
+}
+
+.checkmark-btn .fa-circle {
+    color: #95a5a6;
+}
+
+.habit-item {
+    display: flex;
+    align-items: center;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    background: white;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    border-left: 5px solid #4b6cb7;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.habit-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.habit-item.locked {
+    background: #f8f9fa;
+    border-left-color: #95a5a6;
+}
+
+.habit-item.locked .checkmark-btn {
+    color: #95a5a6;
+}
+
+.habit-label {
+    flex: 1;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.habit-item.locked .habit-label {
+    color: #7f8c8d;
+}
+
 
 
