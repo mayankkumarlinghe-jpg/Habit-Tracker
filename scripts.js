@@ -100,3 +100,220 @@ function loadHabits() {
 function saveHabits() {
     localStorage.setItem('habitTracker_habits', JSON.stringify(appState.habits));
 }
+
+
+function loadHabitData() {
+    const saved = localStorage.getItem('habitTracker_data');
+    appState.habitData = saved ? JSON.parse(saved) : {};
+}
+
+function saveHabitData() {
+    localStorage.setItem('habitTracker_data', JSON.stringify(appState.habitData));
+}
+
+function loadPoints() {
+    const saved = localStorage.getItem('habitTracker_points');
+    appState.points = saved ? parseInt(saved) : 0;
+}
+
+function savePoints() {
+    localStorage.setItem('habitTracker_points', appState.points);
+}
+
+function getTodayData() {
+    if (!appState.habitData[appState.today]) {
+        appState.habitData[appState.today] = { habits: {}, timestamp: Date.now() };
+    }
+    return appState.habitData[appState.today];
+}
+
+// =============================================
+// RENDERING
+// =============================================
+
+function renderYearCalendar() {
+    elements.yearCalendar.innerHTML = '';
+    elements.yearTitle.textContent = appState.selectedYear;
+    elements.currentYear.textContent = appState.selectedYear;
+
+    for (let month = 0; month < 12; month++) {
+        const monthContainer = document.createElement('div');
+        monthContainer.className = 'month-container';
+
+        const header = document.createElement('div');
+        header.className = 'month-header';
+        header.textContent = new Date(appState.selectedYear, month).toLocaleDateString('en-US', { month: 'long' });
+
+        const daysGrid = document.createElement('div');
+        daysGrid.className = 'month-days';
+
+        const firstDay = new Date(appState.selectedYear, month, 1).getDay();
+        for (let i = 0; i < firstDay; i++) {
+            const empty = document.createElement('div');
+            empty.className = 'day-cell empty';
+            daysGrid.appendChild(empty);
+        }
+
+        const daysInMonth = new Date(appState.selectedYear, month + 1, 0).getDate();
+        for (let day = 1; day <= daysInMonth; day++) {
+            const cell = document.createElement('div');
+            cell.className = 'day-cell';
+            cell.textContent = day;
+
+            const dateStr = `${appState.selectedYear}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+            if (appState.habitData[dateStr]) {
+                const data = appState.habitData[dateStr];
+                const completed = Object.values(data.habits).filter(Boolean).length;
+                const total = Object.keys(data.habits).length || appState.habits.length;
+                const ratio = total > 0 ? completed / total : 0;
+                const percent = Math.round(ratio * 100);
+                cell.title = `${percent}% completed`;
+
+                if (ratio === 1) cell.classList.add('completed');
+                else if (ratio >= 0.5) cell.classList.add('partial');
+                else if (ratio > 0) cell.classList.add('partial');
+                else cell.classList.add('failed');
+            } else if (dateStr < appState.today) {
+                cell.classList.add('failed');
+                cell.title = 'No data';
+            } else if (dateStr > appState.today) {
+                cell.classList.add('future');
+            }
+
+            if (dateStr === appState.today) cell.classList.add('today');
+
+            daysGrid.appendChild(cell);
+        }
+
+        monthContainer.appendChild(header);
+        monthContainer.appendChild(daysGrid);
+        elements.yearCalendar.appendChild(monthContainer);
+    }
+}
+
+function renderHabitsList() {
+    elements.habitsList.innerHTML = '';
+    const todayData = getTodayData();
+    const savedToday = Object.keys(todayData.habits).length > 0;
+
+    appState.habits.forEach(habit => {
+        const item = document.createElement('div');
+        item.className = `habit-item ${savedToday ? 'locked' : ''}`;
+        
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'habit-checkbox';
+        checkbox.checked = !!todayData.habits[habit];
+        checkbox.disabled = savedToday;
+
+        const label = document.createElement('label');
+        label.className = 'habit-label';
+        label.textContent = habit;
+
+        item.appendChild(checkbox);
+        item.appendChild(label);
+        elements.habitsList.appendChild(item);
+    });
+
+    updateCompletionPercentage();
+}
+
+function updateCompletionPercentage() {
+    const todayData = getTodayData();
+    const completed = Object.values(todayData.habits).filter(Boolean).length;
+    const total = appState.habits.length || 1;
+    const percent = Math.round((completed / total) * 100);
+
+    elements.completionPercent.textContent = `${percent}%`;
+    elements.progressFill.style.width = `${percent}%`;
+
+    let color = '#e74c3c';
+    if (percent === 100) color = '#2ecc71';
+    else if (percent > 0) color = '#f1c40f';
+
+    elements.completionPercent.style.color = color;
+    elements.progressFill.style.backgroundColor = color;
+}
+
+function updateStats() {
+    let totalCompleted = 0;
+    let currentStreak = 0;
+    let bestStreak = 0;
+    let streakCount = 0;
+    let yearlySum = 0, yearlyDays = 0;
+    let monthlySum = 0, monthlyDays = 0;
+
+    const todayMonth = new Date(appState.today).getMonth();
+
+    Object.keys(appState.habitData).sort().forEach(date => {
+        const data = appState.habitData[date];
+        const completed = Object.values(data.habits).filter(Boolean).length;
+        const total = Object.keys(data.habits).length || appState.habits.length;
+        const ratio = total > 0 ? completed / total : 0;
+
+        if (ratio === 1) {
+            totalCompleted++;
+            streakCount++;
+            currentStreak = streakCount;
+            bestStreak = Math.max(bestStreak, streakCount);
+        } else {
+            streakCount = 0;
+        }
+
+        yearlySum += ratio * 100;
+        yearlyDays++;
+
+        if (new Date(date).getMonth() === todayMonth) {
+            monthlySum += ratio * 100;
+            monthlyDays++;
+        }
+    });
+
+    elements.totalCompleted.textContent = totalCompleted;
+    elements.currentStreak.textContent = currentStreak;
+    elements.bestStreak.textContent = bestStreak;
+    elements.totalPoints.textContent = appState.points;
+    elements.monthlyAvg.textContent = monthlyDays ? Math.round(monthlySum / monthlyDays) + '%' : '0%';
+    elements.yearlyAvg.textContent = yearlyDays ? Math.round(yearlySum / yearlyDays) + '%' : '0%';
+    elements.streakCounter.textContent = `🔥 ${currentStreak} Day Streak`;
+}
+
+function renderCharts() {
+    renderMonthlyChart();
+    renderHabitChart();
+}
+
+function renderMonthlyChart() {
+    const ctx = elements.monthlyChart.getContext('2d');
+    const data = [];
+
+    for (let m = 0; m < 12; m++) {
+        let sum = 0, count = 0;
+        const daysInMonth = new Date(appState.selectedYear, m + 1, 0).getDate();
+        for (let d = 1; d <= daysInMonth; d++) {
+            const date = `${appState.selectedYear}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+            if (appState.habitData[date]) {
+                const habits = Object.values(appState.habitData[date].habits);
+                const ratio = habits.length ? habits.filter(Boolean).length / habits.length : 0;
+                sum += ratio * 100;
+                count++;
+            }
+        }
+        data.push(count ? Math.round(sum / count) : 0);
+    }
+
+    if (monthlyChartInstance) monthlyChartInstance.destroy();
+    monthlyChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+            datasets: [{ data, backgroundColor: '#4b6cb7', borderColor: '#4b6cb7' }]
+        },
+        options: {
+            scales: { y: { beginAtZero: true, max: 100 } },
+            plugins: { legend: { display: false } }
+        }
+    });
+}
