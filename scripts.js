@@ -383,3 +383,100 @@ function renderEditHabitsModal() {
         elements.customHabitsList.appendChild(item);
     });
 }
+
+
+function setupEventListeners() {
+    elements.prevYearBtn.onclick = () => { appState.selectedYear--; renderYearCalendar(); renderCharts(); };
+    elements.nextYearBtn.onclick = () => { appState.selectedYear++; renderYearCalendar(); renderCharts(); };
+
+    elements.saveTodayBtn.onclick = () => {
+        const todayData = getTodayData();
+        const checkboxes = document.querySelectorAll('.habit-checkbox');
+        let newCompletions = 0;
+
+        checkboxes.forEach((cb, i) => {
+            const habit = appState.habits[i];
+            const wasDone = todayData.habits[habit];
+            todayData.habits[habit] = cb.checked;
+            if (cb.checked && !wasDone) newCompletions++;
+        });
+
+        appState.points += newCompletions * 10;
+        savePoints();
+        saveHabitData();
+        renderHabitsList();
+        renderYearCalendar();
+        updateStats();
+        renderCharts();
+    };
+
+    elements.editHabitsBtn.onclick = () => {
+        renderEditHabitsModal();
+        elements.editHabitsModal.classList.add('active');
+    };
+
+    elements.closeModalBtns.forEach(btn => btn.onclick = () => elements.editHabitsModal.classList.remove('active'));
+    elements.editHabitsModal.onclick = e => { if (e.target === elements.editHabitsModal) elements.editHabitsModal.classList.remove('active'); };
+
+    elements.addHabitBtn.onclick = () => {
+        const text = elements.newHabitInput.value.trim();
+        if (text && !appState.habits.includes(text)) {
+            appState.habits.push(text);
+            elements.newHabitInput.value = '';
+            renderEditHabitsModal();
+        }
+    };
+
+    elements.newHabitInput.onkeypress = e => { if (e.key === 'Enter') elements.addHabitBtn.click(); };
+
+    elements.saveHabitsBtn.onclick = () => {
+        saveHabits();
+        renderHabitsList();
+        elements.editHabitsModal.classList.remove('active');
+    };
+
+    elements.darkModeToggle.onclick = () => {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+    };
+
+    elements.exportBtn.onclick = exportData;
+    elements.importBtn.onclick = () => elements.importFile.click();
+    elements.importFile.onchange = e => { if (e.target.files[0]) importData(e.target.files[0]); };
+}
+
+function exportData() {
+    const data = { habits: appState.habits, habitData: appState.habitData, points: appState.points };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `habit-tracker-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function importData(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (data.habits && data.habitData) {
+                appState.habits = data.habits;
+                appState.habitData = data.habitData;
+                appState.points = data.points || 0;
+                saveHabits();
+                saveHabitData();
+                savePoints();
+                initializeApp();
+                alert('Data imported successfully!');
+            }
+        } catch (err) {
+            alert('Invalid file');
+        }
+    };
+    reader.readAsText(file);
+}
+
+// Start app
+document.addEventListener('DOMContentLoaded', initializeApp);
