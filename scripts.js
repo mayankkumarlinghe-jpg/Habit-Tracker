@@ -317,3 +317,69 @@ function renderMonthlyChart() {
         }
     });
 }
+
+
+function renderHabitChart() {
+    const ctx = elements.habitChart.getContext('2d');
+    const rates = appState.habits.map(habit => {
+        let completed = 0, total = 0;
+        Object.values(appState.habitData).forEach(day => {
+            if (day.habits.hasOwnProperty(habit)) {
+                total++;
+                if (day.habits[habit]) completed++;
+            }
+        });
+        return total ? Math.round((completed / total) * 100) : 0;
+    });
+
+    if (habitChartInstance) habitChartInstance.destroy();
+    habitChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: appState.habits,
+            datasets: [{
+                label: 'Completion %',
+                data: rates,
+                backgroundColor: '#2ecc71'
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            scales: { x: { beginAtZero: true, max: 100 } }
+        }
+    });
+}
+
+// =============================================
+// MODAL & EVENTS
+// =============================================
+
+function renderEditHabitsModal() {
+    elements.defaultHabitsList.innerHTML = '';
+    elements.customHabitsList.innerHTML = '';
+
+    DEFAULT_HABITS.forEach(h => {
+        const item = document.createElement('div');
+        item.className = 'edit-habit-item default';
+        item.innerHTML = `<i class="fas fa-lock"></i><span class="edit-habit-label">${h}</span>`;
+        elements.defaultHabitsList.appendChild(item);
+    });
+
+    const custom = appState.habits.filter(h => !DEFAULT_HABITS.includes(h));
+    custom.forEach(h => {
+        const item = document.createElement('div');
+        item.className = 'edit-habit-item custom';
+        item.innerHTML = `<span class="edit-habit-label">${h}</span>`;
+        const btn = document.createElement('button');
+        btn.className = 'remove-habit-btn';
+        btn.innerHTML = '<i class="fas fa-times"></i>';
+        btn.onclick = () => {
+            if (confirm(`Remove "${h}"?`)) {
+                appState.habits = appState.habits.filter(x => x !== h);
+                renderEditHabitsModal();
+            }
+        };
+        item.appendChild(btn);
+        elements.customHabitsList.appendChild(item);
+    });
+}
