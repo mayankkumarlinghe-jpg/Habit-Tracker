@@ -1,109 +1,107 @@
-// Game state
-let userScore = 0;
-let computerScore = 0;
+:root {
+    --bg: #f5f7fa;
+    --text: #333;
+    --card: #fff;
+    --accent: #4b6cb7;
+    --success: #2ecc71;
+    --warning: #f1c40f;
+    --danger: #e74c3c;
+    --gray: #95a5a6;
+    --border: #eaeaea;
+}
 
-// DOM elements
-const choices = document.querySelectorAll('.choice');
-const msgElement = document.getElementById('msg');
-const userScoreElement = document.getElementById('user-score');
-const computerScoreElement = document.getElementById('computer-score');
-const userChoiceDisplay = document.getElementById('user-choice');     // Optional: add these in HTML
-const computerChoiceDisplay = document.getElementById('comp-choice'); // for better visuals
+.dark-mode {
+    --bg: #121212;
+    --text: #e0e0e0;
+    --card: #1f2937;
+    --accent: #60a5fa;
+    --success: #34d399;
+    --warning: #fbbf24;
+    --danger: #f87171;
+    --gray: #9ca3af;
+    --border: #374151;
+}
 
-// Possible choices
-const OPTIONS = ['rock', 'paper', 'scissors'];
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; line-height: 1.6; transition: background 0.3s, color 0.3s; }
 
-// Generate computer's choice
-const getComputerChoice = () => {
-    const randomIndex = Math.floor(Math.random() * 3);
-    return OPTIONS[randomIndex];
-};
+.container { max-width: 1400px; margin: 0 auto; padding: 20px; }
 
-// Determine winner
-const determineWinner = (user, computer) => {
-    if (user === computer) return 'tie';
-    
-    if (
-        (user === 'rock' && computer === 'scissors') ||
-        (user === 'paper' && computer === 'rock') ||
-        (user === 'scissors' && computer === 'paper')
-    ) {
-        return 'user';
-    }
-    return 'computer';
-};
+header {
+    background: linear-gradient(135deg, var(--accent), #182848);
+    color: white;
+    padding: 25px 30px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
 
-// Update UI with result
-const showResult = (userChoice, computerChoice, winner) => {
-    // Update choice visuals (optional but recommended)
-    if (userChoiceDisplay) userChoiceDisplay.textContent = formatChoice(userChoice);
-    if (computerChoiceDisplay) computerChoiceDisplay.textContent = formatChoice(computerChoice);
+header h1 { font-size: 2.4rem; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
 
-    // Highlight chosen options
-    document.querySelectorAll('.choice').forEach(c => c.classList.remove('selected'));
-    document.getElementById(userChoice).classList.add('selected');
+.year-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
 
-    // Update message and scores
-    let message = '';
-    let messageClass = '';
+#current-year { font-size: 3.5rem; font-weight: 800; color: #ffd166; }
 
-    switch (winner) {
-        case 'tie':
-            message = `It's a Tie! Both chose ${formatChoice(userChoice)}.`;
-            messageClass = 'tie';
-            break;
-        case 'user':
-            message = `You Win! ${formatChoice(userChoice)} beats ${formatChoice(computerChoice)}.`;
-            userScore++;
-            userScoreElement.textContent = userScore;
-            messageClass = 'win';
-            break;
-        case 'computer':
-            message = `Computer Wins! ${formatChoice(computerChoice)} beats ${formatChoice(userChoice)}.`;
-            computerScore++;
-            computerScoreElement.textContent = computerScore;
-            messageClass = 'lose';
-            break;
-    }
+.header-buttons { display: flex; gap: 10px; }
 
-    msgElement.textContent = message;
-    msgElement.className = messageClass; // Allows different styling for win/tie/lose
-};
+.streak-badge {
+    background: var(--danger);
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    color: white;
+}
 
-// Helper to capitalize choice
-const formatChoice = (choice) => {
-    return choice.charAt(0).toUpperCase() + choice.slice(1);
-};
+.dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px; }
+@media (max-width: 1100px) { .dashboard { grid-template-columns: 1fr; } }
 
-// Main game function
-const playGame = (userChoice) => {
-    console.log("User choice:", userChoice);
-    
-    const computerChoice = getComputerChoice();
-    console.log("Computer choice:", computerChoice);
-    
-    const winner = determineWinner(userChoice, computerChoice);
-    showResult(userChoice, computerChoice, winner);
-};
+.calendar-container, .daily-checklist {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: transform 0.3s;
+}
 
-// Add click listeners to choices
-choices.forEach((choice) => {
-    choice.addEventListener('click', () => {
-        const choiceID = choice.getAttribute('id');
-        
-        // Add animation feedback
-        choice.classList.add('clicked');
-        setTimeout(() => choice.classList.remove('clicked'), 300);
-        
-        playGame(choiceID);
-    });
-});
+.calendar-container:hover, .daily-checklist:hover { transform: translateY(-5px); }
 
-// Optional: Add keyboard support
-document.addEventListener('keydown', (e) => {
-    const keyMap = { 'r': 'rock', 'p': 'paper', 's': 'scissors' };
-    const choice = keyMap[e.key.toLowerCase()];
-    if (choice) {
-        document.getElementById(choice)?.click();
-    }
-});
+.calendar-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border);
+}
+
+.btn-icon {
+    background: var(--accent);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.year-calendar { display: grid; grid-template-columns: repeat(4,1fr); gap: 15px; }
+@media (max-width: 768px) { .year-calendar { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 480px) { .year-calendar { grid-template-columns: 1fr; } }
+
+.month-container {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 15px;
+    border: 1px solid var(--border);
+}
+
+.month-header { font-weight: 600; margin-bottom: 10px; color: var(--accent); text-align: center; }
+
+.month-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
