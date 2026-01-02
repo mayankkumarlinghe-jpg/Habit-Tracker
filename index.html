@@ -101,3 +101,62 @@
                                 <div class="stat-value" id="current-streak">0</div>
                                 <div class="stat-label">Current Streak</div>
                                 
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="best-streak">0</div>
+                                <div class="stat-label">Best Streak</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="total-points">0</div>
+                                <div class="stat-label">Total Points</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="monthly-avg">0%</div>
+                                <div class="stat-label">Monthly Average</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="yearly-avg">0%</div>
+                                <div class="stat-label">Yearly Average</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Habit Tracker © <span id="footer-year">2026</span> | Data stored locally</p>
+        </footer>
+    </div>
+
+    <!-- Edit Habits Modal -->
+    <div id="edit-habits-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-edit"></i> Edit Habits</h2>
+                <button class="close-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-subtitle">Default habits (locked):</p>
+                <div id="default-habits-list" class="habits-edit-list"></div>
+                
+                <p class="modal-subtitle">Custom habits:</p>
+                <div id="custom-habits-list" class="habits-edit-list"></div>
+                
+                <div class="add-habit-form">
+                    <input type="text" id="new-habit-input" placeholder="New habit (e.g., Read 30 minutes)">
+                    <button id="add-habit-btn" class="btn-primary">
+                        <i class="fas fa-plus"></i> Add
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="save-habits-btn" class="btn-success">Save Changes</button>
+                <button class="btn-secondary close-modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
