@@ -105,3 +105,103 @@ header h1 { font-size: 2.4rem; display: flex; align-items: center; gap: 15px; ma
 .month-header { font-weight: 600; margin-bottom: 10px; color: var(--accent); text-align: center; }
 
 .month-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
+
+.day-cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.day-cell.empty { background: transparent; }
+
+.day-cell.completed { background: var(--success); color: white; }
+.day-cell.partial { background: var(--warning); color: #333; }
+.day-cell.failed { background: var(--danger); color: white; }
+.day-cell.future { background: #ecf0f1; color: var(--gray); }
+.day-cell.today { border: 3px solid var(--accent); }
+
+.checklist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+
+.completion-stats { text-align: center; }
+
+#completion-percent { font-size: 2.5rem; font-weight: 800; display: block; }
+
+.progress-bar {
+    background: var(--border);
+    height: 10px;
+    border-radius: 5px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+#progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--success);
+    transition: width 0.4s ease, background 0.3s;
+}
+
+.today-date {
+    background: #e8f4fc;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+}
+
+.habit-item {
+    display: flex;
+    align-items: center;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    background: var(--card);
+    border-radius: 10px;
+    border-left: 5px solid var(--accent);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: all 0.3s;
+}
+
+.habit-item:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+
+.habit-item.locked { opacity: 0.7; border-left-color: var(--gray); }
+
+.habit-checkbox { width: 22px; height: 22px; margin-right: 15px; accent-color: var(--success); }
+
+.habit-label { flex: 1; font-size: 1.1rem; font-weight: 500; }
+
+.checklist-actions { display: flex; gap: 15px; }
+
+.btn-primary, .btn-success, .btn-secondary {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex: 1;
+    transition: all 0.3s;
+}
+
+.btn-primary { background: var(--accent); color: white; }
+.btn-success { background: var(--success); color: white; }
+.btn-secondary { background: var(--gray); color: white; }
+
+.btn-primary:hover, .btn-success:hover, .btn-secondary:hover { transform: translateY(-2px); }
+
+.analytics-section {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
