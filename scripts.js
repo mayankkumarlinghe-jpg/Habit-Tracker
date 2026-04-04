@@ -480,3 +480,4 @@ function importData(file) {
 
 // Start app
 document.addEventListener('DOMContentLoaded', initializeApp);
+// optimize structure block 1
